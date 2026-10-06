@@ -47,6 +47,7 @@ Dormitory/
 ├── main.py
 ├── requirements.txt
 └── README.md
+```
 
 ### Responsibilities
 
