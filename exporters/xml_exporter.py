@@ -1,11 +1,10 @@
 import xml.etree.ElementTree as ET
-from decimal import Decimal
 
 from exporters.exporter import Exporter
 
 
 class XmlExporter(Exporter):
-    def export(self, data, file_path):
+    def export(self, data: dict, file_path: str) -> None:
         # Create the root XML element
         root = ET.Element("results")
 
@@ -29,10 +28,6 @@ class XmlExporter(Exporter):
             xml_declaration=True,
         )
 
-    @staticmethod
-    def _convert_value(value):
+    def _convert_value(self, value: object) -> str:
         # Convert database values to text used by XML
-        if isinstance(value, Decimal):
-            return str(value)
-
         return str(value)

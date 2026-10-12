@@ -5,7 +5,7 @@ from exporters.exporter import Exporter
 
 
 class JsonExporter(Exporter):
-    def export(self, data, file_path):
+    def export(self, data: dict, file_path: str) -> None:
         # Write query results to a JSON file
         with open(file_path, "w", encoding="utf-8") as file:
             json.dump(
@@ -16,8 +16,7 @@ class JsonExporter(Exporter):
                 default=self._convert_value,
             )
 
-    @staticmethod
-    def _convert_value(value):
+    def _convert_value(self, value: object) -> float:
         # Convert Decimal values returned by MySQL to float
         if isinstance(value, Decimal):
             return float(value)

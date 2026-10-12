@@ -1,3 +1,5 @@
+import argparse
+
 from config import DB_CONFIG
 from database.connection import DatabaseConnection
 from loaders.json_loader import JsonLoader
@@ -6,11 +8,9 @@ from database.student_repository import StudentRepository
 from database.query_repository import QueryRepository
 from exporters.json_exporter import JsonExporter
 from exporters.xml_exporter import XmlExporter
-import argparse
 
 
-def parse_arguments():
-
+def parse_arguments() -> argparse.Namespace:
     # Create command-line argument parser
     parser = argparse.ArgumentParser(
         description="Dormitory data processing application"
@@ -40,14 +40,13 @@ def parse_arguments():
 
     return parser.parse_args()
 
-def main():
+
+def main() -> None:
     # Read command-line arguments
     args = parse_arguments()
 
-    # Create a connection to the MySQL database using configuration settings
-    database = DatabaseConnection(**DB_CONFIG)
-
-    try:
+    # Open the database connection using a context manager
+    with DatabaseConnection(**DB_CONFIG) as connection:
         # Confirm that the database connection was established successfully
         print("Connected to MySQL")
 
@@ -63,8 +62,8 @@ def main():
         print("Students loaded:", len(students))
 
         # Create repositories for database operations
-        room_repository = RoomRepository(database.get_connection())
-        student_repository = StudentRepository(database.get_connection())
+        room_repository = RoomRepository(connection)
+        student_repository = StudentRepository(connection)
 
         # Remove previously imported data
         # Students must be deleted first because they reference rooms
@@ -80,7 +79,7 @@ def main():
         print("Data inserted successfully")
 
         # Create a repository for analytical queries
-        query_repository = QueryRepository(database.get_connection())
+        query_repository = QueryRepository(connection)
 
         # Get rooms with the number of students in each room
         rooms_with_student_count = (
@@ -122,9 +121,6 @@ def main():
 
         print(f"Results exported to {output_file}")
 
-    finally:
-        # Always close the database connection
-        database.close()
 
 # Run the main function only when this file is executed directly
 if __name__ == "__main__":

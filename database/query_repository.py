@@ -1,11 +1,14 @@
+from mysql.connector.abstracts import MySQLConnectionAbstract
+
+
 class QueryRepository:
-    def __init__(self, connection):
-        # Store the database connection
+    def __init__(
+        self,
+        connection: MySQLConnectionAbstract,
+    ) -> None:
         self.connection = connection
 
-    def get_rooms_with_student_count(self):
-
-        # SQL query that returns every room and its number of students
+    def get_rooms_with_student_count(self) -> list[dict]:
         query = """
             SELECT
                 r.id,
@@ -18,23 +21,11 @@ class QueryRepository:
             ORDER BY r.id
         """
 
-        # Create a dictionary cursor so results contain column names
-        cursor = self.connection.cursor(dictionary=True)
-
-        try:
-            # Execute the SQL query
+        with self.connection.cursor(dictionary=True) as cursor:
             cursor.execute(query)
-
-            # Return all query results
             return cursor.fetchall()
 
-        finally:
-            # Always close the cursor
-            cursor.close()
-
-    def get_rooms_with_lowest_average_age(self):
-
-        # SQL query that returns 5 rooms with the lowest average student age
+    def get_rooms_with_lowest_average_age(self) -> list[dict]:
         query = """
             SELECT
                 r.id,
@@ -49,23 +40,11 @@ class QueryRepository:
             LIMIT 5
         """
 
-        # Create a dictionary cursor so results contain column names
-        cursor = self.connection.cursor(dictionary=True)
-
-        try:
-            # Execute the SQL query
+        with self.connection.cursor(dictionary=True) as cursor:
             cursor.execute(query)
-
-            # Return all query results
             return cursor.fetchall()
 
-        finally:
-            # Always close the cursor
-            cursor.close()
-
-    def get_rooms_with_largest_age_difference(self):
-
-        # SQL query that returns 5 rooms with the largest student age difference
+    def get_rooms_with_largest_age_difference(self) -> list[dict]:
         query = """
             SELECT
                 r.id,
@@ -84,23 +63,11 @@ class QueryRepository:
             LIMIT 5
         """
 
-        # Create a dictionary cursor so results contain column names
-        cursor = self.connection.cursor(dictionary=True)
-
-        try:
-            # Execute the SQL query
+        with self.connection.cursor(dictionary=True) as cursor:
             cursor.execute(query)
-
-            # Return all query results
             return cursor.fetchall()
 
-        finally:
-            # Always close the cursor
-            cursor.close()
-    def get_rooms_with_different_sexes(self):
-
-        # SQL query that returns rooms with students of different sexes
-        
+    def get_rooms_with_different_sexes(self) -> list[dict]:
         query = """
             SELECT
                 r.id,
@@ -113,16 +80,6 @@ class QueryRepository:
             ORDER BY r.id
         """
 
-        # Create a dictionary cursor so results contain column names
-        cursor = self.connection.cursor(dictionary=True)
-
-        try:
-            # Execute the SQL query
+        with self.connection.cursor(dictionary=True) as cursor:
             cursor.execute(query)
-
-            # Return all query results
             return cursor.fetchall()
-
-        finally:
-            # Always close the cursor
-            cursor.close()

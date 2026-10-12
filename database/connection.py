@@ -1,4 +1,6 @@
 import mysql.connector
+from mysql.connector.abstracts import MySQLConnectionAbstract
+from types import TracebackType
 
 
 class DatabaseConnection:
@@ -9,8 +11,8 @@ class DatabaseConnection:
         user: str,
         password: str,
         database: str,
-    ):
-        self.connection = mysql.connector.connect(
+    ) -> None:
+        self.connection: MySQLConnectionAbstract = mysql.connector.connect(
             host=host,
             port=port,
             user=user,
@@ -18,9 +20,20 @@ class DatabaseConnection:
             database=database,
         )
 
-    def get_connection(self):
+    def get_connection(self) -> MySQLConnectionAbstract:
         return self.connection
 
-    def close(self):
+    def __enter__(self) -> MySQLConnectionAbstract:
+        return self.connection
+
+    def __exit__(
+        self,
+        exc_type: type[BaseException] | None,
+        exc_value: BaseException | None,
+        traceback: TracebackType | None,
+    ) -> None:
+        self.close()
+
+    def close(self) -> None:
         if self.connection.is_connected():
             self.connection.close()

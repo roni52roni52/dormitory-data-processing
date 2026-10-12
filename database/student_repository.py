@@ -7,24 +7,18 @@ class StudentRepository:
         self.connection = connection
 
     def delete_all(self):
-        # Create a cursor for executing SQL queries
-        cursor = self.connection.cursor()
-
         try:
-            # Remove all existing students from the database
-            cursor.execute("DELETE FROM students")
+            # Use a context manager to ensure the cursor is always closed
+            with self.connection.cursor() as cursor:
+                cursor.execute("DELETE FROM students")
 
             # Save changes in the database
             self.connection.commit()
 
         except Exception:
-            # Undo changes if something goes wrong
+            # Undo uncommitted changes and propagate the error
             self.connection.rollback()
             raise
-
-        finally:
-            # Always close the cursor
-            cursor.close()
 
     def insert_many(self, students):
         # SQL query used to insert students into the database
@@ -33,7 +27,7 @@ class StudentRepository:
             VALUES (%s, %s, %s, %s, %s)
         """
 
-        # Convert student dictionaries into tuples expected by MySQL
+        # Prepare values and convert birthday strings to datetime objects
         values = [
             (
                 student["id"],
